@@ -1,28 +1,41 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField]
-    private float velocidade = 5f;
-
     private Rigidbody2D rb;
-    private float movimentoInput;
 
-    void Awake()
+    public float velocidade = 5f;
+    public float forcaPulo = 5f;
+
+    public Transform groundCheck;
+    public float groundRadius = 0.2f;
+    public LayerMask groundLayer;
+
+    private bool estaNoChao;
+
+    void Start()
     {
         rb = GetComponent<Rigidbody2D>();
     }
 
-    // Capture input in Update (called every frame)
     void Update()
     {
-        movimentoInput = Input.GetAxis("Horizontal");
-    }
+        // Movimento horizontal
+        float movimento = Input.GetAxis("Horizontal");
+        rb.velocity = new Vector2(movimento * velocidade, rb.velocity.y);
 
-    // Apply physics in FixedUpdate
-    void FixedUpdate()
-    {
-        rb.velocity = new Vector2(movimentoInput * velocidade, rb.velocity.y);
+        // Detectar se está no chão
+        estaNoChao = Physics2D.OverlapCircle(groundCheck.position, groundRadius, groundLayer);
+
+        // Debug (opcional)
+        // Debug.Log(estaNoChao);
+
+        // Pulo
+        if (Input.GetButtonDown("Jump") && estaNoChao)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, forcaPulo);
+        }
     }
 }
