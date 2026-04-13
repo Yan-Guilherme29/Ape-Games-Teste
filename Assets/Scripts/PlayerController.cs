@@ -15,9 +15,13 @@ public class PlayerController : MonoBehaviour
 
     private bool estaNoChao;
 
+    private Animator animator;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -25,6 +29,8 @@ public class PlayerController : MonoBehaviour
         // Movimento horizontal
         float movimento = Input.GetAxis("Horizontal");
         rb.velocity = new Vector2(movimento * velocidade, rb.velocity.y);
+
+        animator.SetFloat("velocidade", Mathf.Abs(movimento));
 
         // Detectar se está no chão
         estaNoChao = Physics2D.OverlapCircle(groundCheck.position, groundRadius, groundLayer);

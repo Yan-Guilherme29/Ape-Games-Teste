@@ -1,4 +1,3 @@
 repository "Ape Games - Teste/Ape Games - Teste@4674160251778@cloud"
   path "/"
-    br "/main"
-    co "/main"
+    smartbranch "/main"
