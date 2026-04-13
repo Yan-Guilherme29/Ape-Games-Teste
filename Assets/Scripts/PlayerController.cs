@@ -50,4 +50,12 @@ public class PlayerController : MonoBehaviour
         animator.SetFloat("velocidadeY", rb.velocity.y);
         animator.SetBool("estaNoChao", estaNoChao);
     }
+
+    void OnTriggerEnter2D(Collider2D other)
+{
+    if (other.CompareTag("Death"))
+    {
+        transform.position = new Vector3(0, 2, 0);
+    }
+}
 }
