@@ -32,6 +32,15 @@ public class PlayerController : MonoBehaviour
 
         animator.SetFloat("velocidade", Mathf.Abs(movimento));
 
+        if (movimento > 0)
+        {
+            transform.localScale = new Vector3(1, 1, 1);
+        }
+        else if (movimento < 0)
+        {
+            transform.localScale = new Vector3(-1, 1, 1);
+        }
+
         // Detectar se está no chão
         estaNoChao = Physics2D.OverlapCircle(groundCheck.position, groundRadius, groundLayer);
 
