@@ -26,31 +26,28 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        // Movimento horizontal
         float movimento = Input.GetAxis("Horizontal");
+
+        // movimento
         rb.velocity = new Vector2(movimento * velocidade, rb.velocity.y);
 
-        animator.SetFloat("velocidade", Mathf.Abs(movimento));
-
+        // flip
         if (movimento > 0)
-        {
             transform.localScale = new Vector3(1, 1, 1);
-        }
         else if (movimento < 0)
-        {
             transform.localScale = new Vector3(-1, 1, 1);
-        }
 
-        // Detectar se está no chão
+        // chão
         estaNoChao = Physics2D.OverlapCircle(groundCheck.position, groundRadius, groundLayer);
 
-        // Debug (opcional)
-        // Debug.Log(estaNoChao);
-
-        // Pulo
+        // pulo
         if (Input.GetButtonDown("Jump") && estaNoChao)
         {
             rb.velocity = new Vector2(rb.velocity.x, forcaPulo);
         }
+
+        animator.SetFloat("velocidade", Mathf.Abs(movimento));
+        animator.SetFloat("velocidadeY", rb.velocity.y);
+        animator.SetBool("estaNoChao", estaNoChao);
     }
 }
