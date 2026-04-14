@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,14 +18,23 @@ public class PlayerController : MonoBehaviour
 
     private Animator animator;
 
+    // 👉 Respawn
     private Vector3 posicaoInicial;
+
+    // 👉 Vida
+    public int vida = 3;
+    public TextMeshProUGUI vidaTexto;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
 
+        // salva posição inicial
         posicaoInicial = transform.position;
+
+        // atualiza UI
+        AtualizarUI();
     }
 
     void Update()
@@ -49,24 +59,49 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, forcaPulo);
         }
 
+        // animações (sempre no final)
         animator.SetFloat("velocidade", Mathf.Abs(movimento));
         animator.SetFloat("velocidadeY", rb.velocity.y);
         animator.SetBool("estaNoChao", estaNoChao);
     }
 
+    // 👉 Sistema de dano
+    void TomarDano()
+    {
+        vida--;
+
+        AtualizarUI();
+
+        if (vida <= 0)
+        {
+            vida = 3;
+            AtualizarUI();
+        }
+
+        transform.position = posicaoInicial;
+    }
+
+    // 👉 Atualiza texto da UI
+    void AtualizarUI()
+    {
+        vidaTexto.text = "Vida: " + vida;
+    }
+
+    // 👉 DeathZone
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Death"))
         {
-            transform.position = posicaoInicial;
+            TomarDano();
         }
     }
 
+    // 👉 Enemy
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            transform.position = posicaoInicial;
+            TomarDano();
         }
     }
 }
