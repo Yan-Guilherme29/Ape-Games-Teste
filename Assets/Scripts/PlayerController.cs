@@ -17,11 +17,14 @@ public class PlayerController : MonoBehaviour
 
     private Animator animator;
 
+    private Vector3 posicaoInicial;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-
         animator = GetComponent<Animator>();
+
+        posicaoInicial = transform.position;
     }
 
     void Update()
@@ -52,10 +55,18 @@ public class PlayerController : MonoBehaviour
     }
 
     void OnTriggerEnter2D(Collider2D other)
-{
-    if (other.CompareTag("Death"))
     {
-        transform.position = new Vector3(0, 2, 0);
+        if (other.CompareTag("Death"))
+        {
+            transform.position = posicaoInicial;
+        }
     }
-}
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            transform.position = posicaoInicial;
+        }
+    }
 }
