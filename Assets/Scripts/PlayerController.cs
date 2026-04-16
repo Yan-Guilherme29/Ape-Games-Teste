@@ -18,22 +18,28 @@ public class PlayerController : MonoBehaviour
 
     private Animator animator;
 
-    // 👉 Respawn
+    // Respawn
     private Vector3 posicaoInicial;
 
-    // 👉 Vida
+    // Vida
     public int vida = 3;
     public TextMeshProUGUI vidaTexto;
+
+    // Cooldown de dano
+    private bool podeTomarDano = true;
+    public float tempoInvencivel = 1f;
+
+    // UI
+    public GameObject gameOverUI;
+    public GameObject winUI;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
 
-        // salva posição inicial
         posicaoInicial = transform.position;
 
-        // atualiza UI
         AtualizarUI();
     }
 
@@ -59,44 +65,75 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, forcaPulo);
         }
 
-        // animações (sempre no final)
+        // animações
         animator.SetFloat("velocidade", Mathf.Abs(movimento));
         animator.SetFloat("velocidadeY", rb.velocity.y);
         animator.SetBool("estaNoChao", estaNoChao);
     }
 
-    // 👉 Sistema de dano
+    // Sistema de dano com cooldown
     void TomarDano()
     {
-        vida--;
+        if (!podeTomarDano) return;
 
+        podeTomarDano = false;
+
+        vida--;
         AtualizarUI();
 
         if (vida <= 0)
         {
-            vida = 3;
+            vida = 0;
             AtualizarUI();
+            GameOver();
+            return;
         }
 
         transform.position = posicaoInicial;
+
+        Invoke("ResetarDano", tempoInvencivel);
     }
 
-    // 👉 Atualiza texto da UI
+    void ResetarDano()
+    {
+        podeTomarDano = true;
+    }
+
+    // Atualiza UI
     void AtualizarUI()
     {
         vidaTexto.text = "Vida: " + vida;
     }
 
-    // 👉 DeathZone
+    // Game Over
+    void GameOver()
+    {
+        gameOverUI.SetActive(true);
+        Time.timeScale = 0f;
+    }
+
+    // Vitória
+    void Vitoria()
+    {
+        winUI.SetActive(true);
+        Time.timeScale = 0f;
+    }
+
+    // Triggers (DeathZone + Win)
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Death"))
         {
             TomarDano();
         }
+
+        if (other.CompareTag("Win"))
+        {
+            Vitoria();
+        }
     }
 
-    // 👉 Enemy
+    // Enemy
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
