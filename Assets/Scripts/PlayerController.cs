@@ -25,6 +25,8 @@ public class PlayerController : MonoBehaviour
     public int vida = 3;
     public TextMeshProUGUI vidaTexto;
 
+    public GameObject[] vidasUI;
+
     // Cooldown de dano
     private bool podeTomarDano = true;
     public float tempoInvencivel = 1f;
@@ -101,9 +103,17 @@ public class PlayerController : MonoBehaviour
 
     // Atualiza UI
     void AtualizarUI()
+{
+
+    // bananas
+    for (int i = 0; i < vidasUI.Length; i++)
     {
-        vidaTexto.text = "Vida: " + vida;
+        if (i < vida)
+            vidasUI[i].SetActive(true);
+        else
+            vidasUI[i].SetActive(false);
     }
+}
 
     // Game Over
     void GameOver()
