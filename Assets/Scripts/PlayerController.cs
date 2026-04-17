@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -103,17 +104,21 @@ public class PlayerController : MonoBehaviour
 
     // Atualiza UI
     void AtualizarUI()
-{
-
-    // bananas
-    for (int i = 0; i < vidasUI.Length; i++)
     {
-        if (i < vida)
-            vidasUI[i].SetActive(true);
-        else
-            vidasUI[i].SetActive(false);
+        for (int i = 0; i < vidasUI.Length; i++)
+        {
+            Image img = vidasUI[i].GetComponent<Image>();
+
+            if (i < vida)
+            {
+                img.color = Color.white; // normal
+            }
+            else
+            {
+                img.color = Color.gray; // apagada
+            }
+        }
     }
-}
 
     // Game Over
     void GameOver()
@@ -144,11 +149,28 @@ public class PlayerController : MonoBehaviour
     }
 
     // Enemy
+
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            TomarDano();
+            // se caiu em cima do inimigo
+            if (rb.velocity.y < 0)
+            {
+                EnemyController enemy = collision.gameObject.GetComponent<EnemyController>();
+
+                if (enemy != null)
+                {
+                    enemy.TomarDano();
+                }
+
+                // quicar
+                rb.velocity = new Vector2(rb.velocity.x, forcaPulo);
+            }
+            else
+            {
+                TomarDano();
+            }
         }
     }
 }

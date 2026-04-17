@@ -11,6 +11,9 @@ public class EnemyController : MonoBehaviour
 
     private Rigidbody2D rb;
 
+    // 👉 VIDA DO INIMIGO
+    public int vida = 2;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -44,5 +47,32 @@ public class EnemyController : MonoBehaviour
         Vector3 escala = transform.localScale;
         escala.x *= -1;
         transform.localScale = escala;
+    }
+
+    // 👉 FUNÇÃO DE DANO
+    public void TomarDano()
+    {
+        vida--;
+
+        // efeito visual simples (opcional)
+        StartCoroutine(DanoFlash());
+
+        if (vida <= 0)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    // 👉 efeito de hit (piscar)
+    System.Collections.IEnumerator DanoFlash()
+    {
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+
+        if (sr != null)
+        {
+            sr.color = Color.red;
+            yield return new WaitForSeconds(0.1f);
+            sr.color = Color.white;
+        }
     }
 }
