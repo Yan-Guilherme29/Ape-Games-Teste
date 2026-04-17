@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -25,7 +26,6 @@ public class PlayerController : MonoBehaviour
     // Vida
     public int vida = 3;
     public TextMeshProUGUI vidaTexto;
-
     public GameObject[] vidasUI;
 
     // Cooldown de dano
@@ -42,6 +42,10 @@ public class PlayerController : MonoBehaviour
         animator = GetComponent<Animator>();
 
         posicaoInicial = transform.position;
+
+        // garante que UI começa escondida
+        gameOverUI.SetActive(false);
+        winUI.SetActive(false);
 
         AtualizarUI();
     }
@@ -110,13 +114,9 @@ public class PlayerController : MonoBehaviour
             Image img = vidasUI[i].GetComponent<Image>();
 
             if (i < vida)
-            {
-                img.color = Color.white; // normal
-            }
+                img.color = Color.white;
             else
-            {
-                img.color = Color.gray; // apagada
-            }
+                img.color = Color.gray;
         }
     }
 
@@ -149,12 +149,10 @@ public class PlayerController : MonoBehaviour
     }
 
     // Enemy
-
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            // se caiu em cima do inimigo
             if (rb.velocity.y < 0)
             {
                 EnemyController enemy = collision.gameObject.GetComponent<EnemyController>();
@@ -172,5 +170,12 @@ public class PlayerController : MonoBehaviour
                 TomarDano();
             }
         }
+    }
+
+    // RESTART
+    public void Reiniciar()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
